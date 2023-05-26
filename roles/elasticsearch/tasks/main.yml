@@ -1,0 +1,64 @@
+---
+
+- name: Añadir repo Grafana en Rhel
+  when: ansible_os_family == "RedHat"
+  block:
+  - name: Añadir repo elasticsearch
+    ansible.builtin.yum_repository:
+      name: elasticsearch
+      description: elasticsearch repo
+      baseurl: "https://artifacts.elastic.co/packages/{{ version }}/yum"
+      gpgcheck: false
+
+
+- name: Instalar elasticsearch
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  with_items:
+    - elasticsearch    
+
+
+- name: Configuracion elasticsearch
+  ansible.builtin.lineinfile:
+    path: "{{ item.path }}"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+  with_items:
+    - { path: /etc/elasticsearch/elasticsearch.yml,
+        regexp: "^#network.host",
+        line: "network.host: 127.0.0.1"
+      }
+    - { path: /etc/elasticsearch/elasticsearch.yml,
+        regexp: "^#http.port",
+        line: "http.port: 9200"
+      }    
+    - { path: /etc/sysconfig/elasticsearch,
+        regexp: "^#ES_JAVA_OPTS=",
+        line: 'ES_JAVA_OPTS="-Djna.tmpdir=/var/lib/elasticsearch/tmp"'
+      }
+
+
+- name: Reload daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+
+- name: Habilitar servicio elasticsearch
+  ansible.builtin.service:
+    name: elasticsearch
+    state: started
+    enabled: true      
+
+
+- name: Permitir trafico por puerto de elasticsearch
+  ansible.posix.firewalld:
+    port: 9200/tcp
+    state: enabled
+    permanent: true
+    immediate: true
+  when: ansible_os_family == "RedHat"  
+
+...
