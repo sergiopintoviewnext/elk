@@ -8,7 +8,7 @@ platforms:
   - name: server
     image: registry.access.redhat.com/ubi8/ubi-init
     networks:
-      - name: "red_prometheus"    
+      - name: "red_elk"    
     tmpfs:
       - /run
       - /tmp

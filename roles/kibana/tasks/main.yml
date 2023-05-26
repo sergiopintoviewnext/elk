@@ -35,6 +35,12 @@
     enabled: true
 
 
+- name: Esperar a que el puerto 5601 este disponible
+  ansible.builtin.wait_for:
+    port: 5601
+    delay: 30
+
+
 - name: Habilitar puerto kibana
   ansible.posix.firewalld:
     port: 5601/tcp
