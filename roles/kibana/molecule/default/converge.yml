@@ -3,8 +3,8 @@
 - name: Converge
   hosts: all
   tasks:
-    - name: "Include elasticsearch"
+    - name: "Include kibana"
       include_role:
-        name: "elasticsearch"
+        name: "kibana"
 
 ...
