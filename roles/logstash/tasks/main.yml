@@ -29,7 +29,8 @@
      - 02-input-beat.conf    
      - 30-elasticsearch-output.conf
      - 10-syslog-filter.conf
-     
+    # - logstash.conf
+
 
 - name: Habilitar servicio
   ansible.builtin.service:
