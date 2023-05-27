@@ -26,11 +26,10 @@
     group: root
     mode: '0644'
   with_items:
-     - 02-input-beat.conf    
-     - 30-elasticsearch-output.conf
-     - 10-syslog-filter.conf
-    # - logstash.conf
-
+    #  - 02-input-beat.conf    
+    #  - 30-elasticsearch-output.conf
+    #  - 10-syslog-filter.conf
+    - logstash.conf
 
 - name: Habilitar servicio
   ansible.builtin.service:
@@ -39,7 +38,19 @@
     enabled: true
 
 
-- name: Permitir trafico por puerto de elasticsearch
+- name: Lanzar configuracion logstash para activar servidor
+  ansible.builtin.shell:
+    cmd: /usr/share/logstash/bin/logstash -f /etc/logstash/conf.d/logstash.conf > logstash.log 2>&1 &
+  changed_when: false
+
+
+- name: Esperar a puerto 5044
+  ansible.builtin.wait_for:
+    port: 5044
+    delay: 10
+
+
+- name: Permitir trafico por puerto de logstash
   ansible.posix.firewalld:
     port: 5044/tcp
     state: enabled
