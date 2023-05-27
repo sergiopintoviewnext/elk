@@ -1,16 +1,5 @@
 ---
 
-- name: Añadir repo elasticsearch en Rhel
-  when: ansible_os_family == "RedHat"
-  block:
-  - name: Añadir repo elasticsearch
-    ansible.builtin.yum_repository:
-      name: elasticsearch
-      description: elasticsearch repo
-      baseurl: "https://artifacts.elastic.co/packages/{{ version }}/yum"
-      gpgcheck: false
-
-
 - name: Instalar elasticsearch
   ansible.builtin.package:
     name: "{{ item }}"
