@@ -1,0 +1,22 @@
+---
+
+- name: Converge
+  hosts: all
+  vars_files:
+    - main.yml
+  pre_tasks:
+    - name: Añadir repo elasticsearch en Rhel
+      when: ansible_os_family == "RedHat"
+      block:
+      - name: Añadir repo elasticsearch
+        ansible.builtin.yum_repository:
+          name: elasticsearch
+          description: elasticsearch repo
+          baseurl: "https://artifacts.elastic.co/packages/{{ version }}/yum"
+          gpgcheck: false    
+  tasks:
+    - name: "Include filebeat"
+      include_role:
+        name: "filebeat"
+
+...

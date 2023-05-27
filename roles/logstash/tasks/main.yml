@@ -7,18 +7,14 @@
     update_cache: true
 
 
-- name: Crear ficheros configuracion
+- name: Crear fichero configuracion
   ansible.builtin.copy:
-    src: "{{ item }}"
+    src: logstash.conf
     dest: /etc/logstash/conf.d/
     owner: root
     group: root
     mode: '0644'
-  with_items:
-    #  - 02-input-beat.conf    
-    #  - 30-elasticsearch-output.conf
-    #  - 10-syslog-filter.conf
-    - logstash.conf
+
 
 - name: Habilitar servicio
   ansible.builtin.service:

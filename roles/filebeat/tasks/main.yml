@@ -1,0 +1,51 @@
+---
+
+- name: Instalar filebeat
+  ansible.builtin.package:
+    name: filebeat
+    state: present
+    update_cache: true
+
+
+- name: Configuracion filebeat
+  ansible.builtin.lineinfile:
+    path: /etc/filebeat/filebeat.yml
+    search_string: "{{ item.search_string }}"
+    line: "{{ item.line }}"
+    state: present
+  with_items:
+    - { search_string: '  hosts: ["localhost:9200"]',
+        line: '  #hosts: ["localhost:9200"]'}
+    - { search_string: '  #hosts: ["localhost:5044"]',
+        line: '  hosts: ["server:5044"]'}        
+
+
+- name: Habilitar modulo system de filebeat
+  ansible.builtin.command:
+    cmd: filebeat modules enable system
+  changed_when: false
+
+
+- name: Configuracion modulo system de filebeat
+  ansible.builtin.lineinfile:
+    path: /etc/filebeat/modules.d/system.yml
+    search_string: "{{ item.search_string }}"
+    insertafter: "{{ item.insertafter }}"
+    line: "{{ item.line }}"
+    state: present
+  with_items:
+    - { search_string: '    #var.paths:',
+        insertafter: '  auth:',
+        line: '    var.paths: ["/var/log/secure"]'}   
+    - { search_string: '    #var.paths:',
+        insertafter: '  syslog:',
+        line: '    var.paths: ["/var/log/messages"]'}
+
+
+- name: Habilitar servicio filebeat
+  ansible.builtin.service:
+    name: filebeat
+    state: started
+    enabled: true   
+
+...

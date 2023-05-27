@@ -20,4 +20,17 @@
         success_msg: "{{ servicio }} corriendo"
         fail_msg: "{{ servicio }} no esta corriendo"
 
+
+    - name: Comprobar conexion a pagina de {{ servicio }}
+      ansible.builtin.uri:
+        url: http://localhost:9200
+      register: pagina
+
+
+    - name: Comprobar codigo http
+      ansible.builtin.assert:
+        that: pagina.status == 200
+        success_msg: "Conexion a stats {{ servicio }} OK"
+        fail_msg: "Error en conexion a stats {{ servicio }} ({{ pagina.status }})"
+
 ...
