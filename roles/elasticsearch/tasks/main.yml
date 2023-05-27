@@ -1,6 +1,6 @@
 ---
 
-- name: Añadir repo Grafana en Rhel
+- name: Añadir repo elasticsearch en Rhel
   when: ansible_os_family == "RedHat"
   block:
   - name: Añadir repo elasticsearch
